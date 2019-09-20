@@ -25,9 +25,17 @@ public class TransactionController{
            }
            return transaction;
     }
+    
+    @PostMapping(value = "/transactions")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public Object createTransaction(@RequestBody Transaction transaction){
+       return transactionService.saveTransaction(transaction);
+    }
+
+    
 
 
-   
 }
 
 
