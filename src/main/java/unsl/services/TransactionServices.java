@@ -26,8 +26,9 @@ public class TransactionServices{
 
   public Transaction saveTransaction(Transaction transaction){
     
-     transaction.setDate(TransactionServices.getCurrentTime()); 
+    transaction.setDate(TransactionServices.getCurrentTime()); 
     
+    transaction.setStatus(Transaction.Status.PROCESADA);
     return transactionRepository.save(transaction);
   }
   
