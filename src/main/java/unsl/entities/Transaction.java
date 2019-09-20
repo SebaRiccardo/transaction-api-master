@@ -4,11 +4,13 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-
+@Table(name = "transactions",uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
 public class Transaction {
 
     public static enum Status {
-        PENDIENTE, PROCESADA, CANCELADA
+        PENDIENTE,
+        PROCESADA,
+        CANCELADA
     }
 
     @Id
