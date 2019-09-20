@@ -18,14 +18,18 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @JsonProperty("")
     private long origin_account_id;
+
+    @JsonProperty("")
     private long destination_account_id;
-    private String date;
-    private long amount;
+
+    @JsonProperty("")
+    private float amount;
     
+    private String date;
 
     @Enumerated(EnumType.STRING)
     private Status status;
-    
+
 }
