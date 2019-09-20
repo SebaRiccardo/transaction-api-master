@@ -16,6 +16,16 @@ public class TransactionController{
     @Autowired
     TransactionServices transactionService;
     
+    @GetMapping(value ="/transactions")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)  
+    public List<Transaction> getAll(){
+        return transactionService.getAll();
+    }
+     
+
+
+
     @GetMapping(value="/transactions/{id}")
     @ResponseBody
     public Object getTransaction(@PathVariable("id")long transactionId){
@@ -33,7 +43,7 @@ public class TransactionController{
        return transactionService.saveTransaction(transaction);
     }
 
-    
+
 
 
 }
