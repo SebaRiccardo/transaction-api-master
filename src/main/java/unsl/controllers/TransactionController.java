@@ -23,9 +23,6 @@ public class TransactionController{
         return transactionService.getAll();
     }
      
-
-
-
     @GetMapping(value="/transactions/{id}")
     @ResponseBody
     public Object getTransaction(@PathVariable("id")long transactionId){
