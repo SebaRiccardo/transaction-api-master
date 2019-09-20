@@ -11,14 +11,18 @@ import unsl.repository.TransactionRepository;
 public class TransactionServices{
  
   @Autowired
-  TransactionRepository transationRepository;
+  TransactionRepository transactionRepository;
+  
+  public List<Transaction> getAll() {
+    return transactionRepository.findAll();
+  }
 
   public Transaction getTransaction(long id){
-      return transationRepository.findById(id).orElse(null);
+      return transactionRepository.findById(id).orElse(null);
   }
 
   public Transaction saveTransaction(Transaction transaction){
-      return transationRepository.save(transaction);
+      return transactionRepository.save(transaction);
   }
 
 }
