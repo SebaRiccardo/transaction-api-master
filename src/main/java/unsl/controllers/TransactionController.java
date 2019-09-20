@@ -38,10 +38,8 @@ public class TransactionController{
     @ResponseBody
     public Object createTransaction(@RequestBody Transaction transaction){
        return transactionService.saveTransaction(transaction);
+    
     }
-
-
-
 
 }
 
