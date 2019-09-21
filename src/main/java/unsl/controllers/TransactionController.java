@@ -63,16 +63,13 @@ public class TransactionController {
             BufferedReader rd = new BufferedReader(
 		    new InputStreamReader(response.getEntity().getContent()));
              
-          //  BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
             StringBuilder sb = new StringBuilder();
             String line = null;
 
             while ((line = rd.readLine()) != null) // Read line by line
-                sb.append(line + "\n");
-
-            String resString = sb.toString(); // Result is here
-            
-            System.out.println("esto tiro la request "+resString);
+                sb.append(line);
+                System.out.println(line);
+ 
 
             rd.close();
 
