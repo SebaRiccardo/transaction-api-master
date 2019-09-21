@@ -60,9 +60,11 @@ public class TransactionController {
         try {
             HttpResponse response = client.execute(request);
             
-            BufferedReader rd = new BufferedReader(
+            BufferedReader jsonText = new BufferedReader(
 		    new InputStreamReader(response.getEntity().getContent()));
              
+            
+
             StringBuilder sb = new StringBuilder();
             String line = null;
 
