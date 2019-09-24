@@ -67,10 +67,6 @@ public class TransactionController {
        restService.putAmount(String.format("http://localhost:8889/%d", "id de user" )),amount );
 
 
-
-
-
-
         return transactionService.saveTransaction(transaction);
     
     }
