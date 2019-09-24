@@ -15,16 +15,22 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import unsl.entities.Account;
 import unsl.entities.ResponseError;
 import unsl.entities.Transaction;
 import unsl.services.TransactionServices;
+import unsl.utils.RestService;
 
 @RestController
 //@RequestMapping("/transacciones")
 public class TransactionController {
-
+     
+    
     @Autowired
     TransactionServices transactionService;
+    @Autowired
+    RestService restService; 
 
     @GetMapping(value = "/transactions")
     @ResponseBody
@@ -49,43 +55,28 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public Object createTransaction(@RequestBody Transaction transaction) {
-
-        // supposed this is your FirstController url.
-        String url = "http://localhost:8889/accounts/"+transaction.getOrigin_account_id();
-        // create request.
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet(url);
-        // execute your request.
-        
-        try {
-            HttpResponse response = client.execute(request);
-            
-            BufferedReader jsonText = new BufferedReader(
-		    new InputStreamReader(response.getEntity().getContent()));
-             
-            
-
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-
-            while ((line = rd.readLine()) != null) // Read line by line
-                sb.append(line);
-                System.out.println(line);
- 
-
-            rd.close();
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+       long amount;
+       Account origin_Account;
+       Account destination_Account;
        
+       /* obtengo dos accounts */
+       origin_Account= restService.getAccount("localhost:8889/accounts/%d",transaction.getOrigin_account_id());
+       destination_Account= restService.getAccount("localhost:8889/accounts/%d",transaction.getDestination_account_id());
+
+       /* trasnferencia*/ 
+       restService.putAmount(String.format("http://localhost:8889/%d", "id de user" )),amount );
+
+
+
+
+
+
         return transactionService.saveTransaction(transaction);
     
     }
 
 
-    // funcion actualizar saldo....
+    
 
 }
 
