@@ -56,7 +56,7 @@ public class TransactionController {
     @PostMapping(value = "/transactions")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public Object createTransaction(@RequestBody Transaction transaction) {
+    public Object createTransaction(@RequestBody Transaction transaction) throws Exception {
        long amount;
        
        Account origin_Account;
@@ -64,8 +64,8 @@ public class TransactionController {
        
 
        /* obtengo dos accounts */
-       origin_Account= restService.getAccount("localhost:8889/accounts/%d",transaction.getOrigin_account_id());
-       destination_Account= restService.getAccount("localhost:8889/accounts/%d",transaction.getDestination_account_id());
+       origin_Account= restService.getAccount(String.format("localhost:8889/accounts/%d",transaction.getOrigin_account_id()));
+       destination_Account= restService.getAccount(String.format("localhost:8889/accounts/%d",transaction.getDestination_account_id()));
 
       
        
@@ -75,9 +75,9 @@ public class TransactionController {
                 HttpStatus.NOT_FOUND);
        }
      
-       /* debe tener suficiente dinero para transgerir */
+       /* debe tener suficiente dinero para transferir */
    
-      if ( transaction.getAmount() > origin_Account.getAccount_balance()) {
+      if( transaction.getAmount() > origin_Account.getAccount_balance()) {
         return new ResponseEntity(new ResponseError(400, "Insufficient money to transfer"),
                 HttpStatus.NOT_FOUND);
       }
@@ -85,7 +85,12 @@ public class TransactionController {
 
 
        /* trasnferencia*/ 
-       restService.putAmount(String.format("http://localhost:8889/%d", "id de user" )),amount );
+       
+
+       origin_Account.setAccount_balance(origin_Account.getAccount_balance()-transaction.getAmount());
+       destination_Account.setAccount_balance(origin_Account.getAccount_balance()+transaction.getAmount());
+
+       restService.putAccount(String.format("http://localhost:8889/accounts/&d",origin_Account.getId()) , amount );
 
           
 

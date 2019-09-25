@@ -35,7 +35,7 @@ public class RestService {
      * @return
      * @throws Exception
      */
-    public Account getAccount(String url,long id) throws Exception {
+    public Account getAccount(String url) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
 
         Account account;
@@ -54,7 +54,7 @@ public class RestService {
      * @param url
      * @throws Exception
      */
-    public void putAmount(String url, Long amount) throws Exception {
+    public void putAccount(String url, Long amount) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         try {
             restTemplate.put(url, amount);
