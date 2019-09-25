@@ -22,6 +22,7 @@ import unsl.entities.Transaction;
 import unsl.services.TransactionServices;
 import unsl.utils.RestService;
 
+
 @RestController
 //@RequestMapping("/transacciones")
 public class TransactionController {
@@ -29,8 +30,9 @@ public class TransactionController {
     
     @Autowired
     TransactionServices transactionService;
+   
     @Autowired
-    RestService   restService; 
+    RestService  restService; 
 
     @GetMapping(value = "/transactions")
     @ResponseBody
@@ -56,12 +58,31 @@ public class TransactionController {
     @ResponseBody
     public Object createTransaction(@RequestBody Transaction transaction) {
        long amount;
+       
        Account origin_Account;
        Account destination_Account;
        
+
        /* obtengo dos accounts */
        origin_Account= restService.getAccount("localhost:8889/accounts/%d",transaction.getOrigin_account_id());
        destination_Account= restService.getAccount("localhost:8889/accounts/%d",transaction.getDestination_account_id());
+
+      
+       
+       /* el tipo de moneda tiene que ser el mismo */
+       if (!origin_Account.getCurrency().equals(destination_Account.getCurrency()) ) {
+        return new ResponseEntity(new ResponseError(400, "The origin account and destination account must have the same currency"),
+                HttpStatus.NOT_FOUND);
+       }
+     
+       /* debe tener suficiente dinero para transgerir */
+   
+      if ( transaction.getAmount() > origin_Account.getAccount_balance()) {
+        return new ResponseEntity(new ResponseError(400, "Insufficient money to transfer"),
+                HttpStatus.NOT_FOUND);
+      }
+
+
 
        /* trasnferencia*/ 
        restService.putAmount(String.format("http://localhost:8889/%d", "id de user" )),amount );
