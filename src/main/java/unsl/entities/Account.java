@@ -9,6 +9,11 @@ import javax.persistence.*;
      @UniqueConstraint(columnNames={"id"})})
 
   public class Account {
+
+        public Account(){
+
+            
+        }
         public static enum Currency {
             PESO_AR,
             DOLAR,

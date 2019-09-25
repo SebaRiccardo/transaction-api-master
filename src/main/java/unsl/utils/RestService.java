@@ -17,7 +17,7 @@ public class RestService {
     public User getUser(String url) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
 
-        User user;
+        User user;  /* crear contrustor vacio en usuario para q no tire error */
 
         try {
             user = restTemplate.getForObject(url, User.class);

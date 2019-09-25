@@ -24,7 +24,6 @@ import unsl.utils.RestService;
 
 
 @RestController
-//@RequestMapping("/transacciones")
 public class TransactionController {
      
     
@@ -57,7 +56,7 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public Object createTransaction(@RequestBody Transaction transaction) throws Exception {
-       long amount;
+       long amount= 0;
        
        Account origin_Account;
        Account destination_Account;
@@ -83,19 +82,15 @@ public class TransactionController {
       }
 
 
-
-       /* trasnferencia*/ 
+       /* trasnferencia descuenta de una y suma en la otra*/ 
        
-
        origin_Account.setAccount_balance(origin_Account.getAccount_balance()-transaction.getAmount());
        destination_Account.setAccount_balance(origin_Account.getAccount_balance()+transaction.getAmount());
 
-       restService.putAccount(String.format("http://localhost:8889/accounts/&d",origin_Account.getId()) , amount );
+       restService.putAccount(String.format("http://localhost:8889/accounts"),amount);
 
-          
-
-
-        return transactionService.saveTransaction(transaction);
+       
+       return transactionService.saveTransaction(transaction);
     
     }
 
