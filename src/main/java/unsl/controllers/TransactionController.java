@@ -66,8 +66,8 @@ public class TransactionController {
        
 
        /* obtengo dos accounts */
-       origin_Account= restService.getAccount(String.format("localhost:8889/accounts/%d",transaction.getOrigin_account_id()));
-       destination_Account= restService.getAccount(String.format("localhost:8889/accounts/%d",transaction.getDestination_account_id()));
+       origin_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction.getOrigin_account_id()));
+       destination_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction.getDestination_account_id()));
 
        /* el tipo de moneda tiene que ser el mismo */
        if (!origin_Account.getCurrency().equals(destination_Account.getCurrency()) ) {
