@@ -63,30 +63,27 @@ public class TransactionController {
        Account origin_Account;
        Account destination_Account;
        
+       
 
        /* obtengo dos accounts */
        origin_Account= restService.getAccount(String.format("localhost:8889/accounts/%d",transaction.getOrigin_account_id()));
        destination_Account= restService.getAccount(String.format("localhost:8889/accounts/%d",transaction.getDestination_account_id()));
 
-      
-       
        /* el tipo de moneda tiene que ser el mismo */
        if (!origin_Account.getCurrency().equals(destination_Account.getCurrency()) ) {
-        return new ResponseEntity(new ResponseError(400, "The origin account and destination account must have the same currency"),
-                HttpStatus.NOT_FOUND);
+        return new ResponseEntity(new ResponseError(400, "The origin account and destination account must have the same currency"),HttpStatus.NOT_FOUND);
        }
      
        /* debe tener suficiente dinero para transferir */
-      if( transaction.getAmount() > origin_Account.getAccount_balance()) {
+       if( transaction.getAmount().compareTo(origin_Account.getAccount_balance())>0) {
         return new ResponseEntity(new ResponseError(400, "Insufficient money to transfer"),
                 HttpStatus.NOT_FOUND);
-      }
-
+       }
 
        /* trasnferencia descuenta de una y suma en la otra*/ 
        
        amount_for_Origin.setAmount(origin_Account.getAccount_balance().subtract(transaction.getAmount()));  
-       amount_for_destination.setAmount(origin_Account.getAccount_balance().add(transaction.getAmount()));
+       amount_for_destination.setAmount(destination_Account.getAccount_balance().add(transaction.getAmount()));
 
        restService.putAccount(String.format("http://localhost:8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
        restService.putAccount(String.format("http://localhost:8889/accounts/%d",destination_Account.getId()),amount_for_destination);
