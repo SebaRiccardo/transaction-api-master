@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import unsl.entities.Account;
+import unsl.entities.Amount;
 import unsl.entities.ResponseError;
 import unsl.entities.Transaction;
 import unsl.services.TransactionServices;
@@ -56,8 +57,8 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public Object createTransaction(@RequestBody Transaction transaction) throws Exception {
-       float amount_for_Origin= 0;
-       float amount_for_destination=0; 
+       Amount amount_for_Origin = new Amount();
+       Amount amount_for_destination = new Amount(); 
       
        Account origin_Account;
        Account destination_Account;
@@ -84,8 +85,8 @@ public class TransactionController {
 
        /* trasnferencia descuenta de una y suma en la otra*/ 
        
-       amount_for_Origin= origin_Account.getAccount_balance()-transaction.getAmount();
-       amount_for_destination=destination_Account.getAccount_balance()+transaction.getAmount();
+       amount_for_Origin.setAmount(origin_Account.getAccount_balance().subtract(transaction.getAmount()));  
+       amount_for_destination.setAmount(origin_Account.getAccount_balance().add(transaction.getAmount()));
 
        restService.putAccount(String.format("http://localhost:8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
        restService.putAccount(String.format("http://localhost:8889/accounts/%d",destination_Account.getId()),amount_for_destination);

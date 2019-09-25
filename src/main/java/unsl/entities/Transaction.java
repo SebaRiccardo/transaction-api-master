@@ -1,5 +1,7 @@
 package unsl.entities;
 
+import java.math.BigDecimal;
+
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,7 +26,7 @@ public class Transaction {
     private long destination_account_id;
 
     @JsonProperty("amount")
-    private float amount;
+    private BigDecimal amount;
 
     private String date;
 
@@ -64,11 +66,11 @@ public class Transaction {
         this.id = id;
     }
 
-    public float getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(float amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
    
