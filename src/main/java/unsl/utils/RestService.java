@@ -54,10 +54,10 @@ public class RestService {
      * @param url
      * @throws Exception
      */
-    public void putAccount(String url, float amount) throws Exception {
+    public void putAccount(String url, Amount amount) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         try {
-            restTemplate.put(url, request, uriVariables);
+            restTemplate.put(url,amount);
         }  catch (Exception e){
             throw new Exception( buildMessageError(e));
         }
