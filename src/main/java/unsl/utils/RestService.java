@@ -4,16 +4,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-import unsl.entities.Account;
+import unsl.entities.*;
 
 @Service
 public class RestService {
-    /*
+    
     /**
      * @param url
      * @return
      * @throws Exception
-     
+     * */
     public User getUser(String url) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -27,14 +27,15 @@ public class RestService {
 
         return user;
     }
-   */
+    
+    
 
     /** 
      * @param url
      * @return
      * @throws Exception
      */
-    public Account getAccount(String url) throws Exception {
+    public Account getAccount(String url,long id) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
 
         Account account;
