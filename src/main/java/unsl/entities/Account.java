@@ -1,5 +1,9 @@
 package unsl.entities;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.math.BigDecimal;
+
 import javax.persistence.*;
 
 
@@ -12,7 +16,7 @@ import javax.persistence.*;
 
         public Account(){
 
-            
+
         }
         public static enum Currency {
             PESO_AR,
@@ -29,7 +33,7 @@ import javax.persistence.*;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private long id;
      
-        private float account_balance;
+        private BigDecimal account_balance;
      
         @JsonProperty("holder")
         private long holder;
@@ -49,11 +53,11 @@ import javax.persistence.*;
             this.id = id;
         }
      
-        public float getAccount_balance() {
+        public BigDecimal getAccount_balance() {
             return account_balance;
         }
      
-        public void setAccount_balance(float account_balance) {
+        public void setAccount_balance(BigDecimal account_balance) {
             this.account_balance = account_balance;
         }
      
