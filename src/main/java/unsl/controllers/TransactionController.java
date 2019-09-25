@@ -64,11 +64,15 @@ public class TransactionController {
        Account destination_Account;
        
        
+         
 
        /* obtengo dos accounts */
        origin_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction.getOrigin_account_id()));
        destination_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction.getDestination_account_id()));
-
+       /**  una cuenta no pude transferir a la misma cuenta*/
+       if(origin_Account.getId()== destination_Account.getId()){
+        return new ResponseEntity(new ResponseError(400, "The origin account and destination account must be different accounts"),HttpStatus.NOT_FOUND);
+       }
        /* el tipo de moneda tiene que ser el mismo */
        if (!origin_Account.getCurrency().equals(destination_Account.getCurrency()) ) {
         return new ResponseEntity(new ResponseError(400, "The origin account and destination account must have the same currency"),HttpStatus.NOT_FOUND);

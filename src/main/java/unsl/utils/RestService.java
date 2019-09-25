@@ -58,6 +58,7 @@ public class RestService {
         RestTemplate restTemplate = new RestTemplate();
         try {
             restTemplate.put(url,amount);
+            
         }  catch (Exception e){
             throw new Exception( buildMessageError(e));
         }
