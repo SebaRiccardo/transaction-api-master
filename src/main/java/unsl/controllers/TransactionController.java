@@ -56,8 +56,9 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public Object createTransaction(@RequestBody Transaction transaction) throws Exception {
-       long amount= 0;
-       
+       float amount_for_Origin= 0;
+       float amount_for_destination=0; 
+      
        Account origin_Account;
        Account destination_Account;
        
@@ -75,7 +76,6 @@ public class TransactionController {
        }
      
        /* debe tener suficiente dinero para transferir */
-   
       if( transaction.getAmount() > origin_Account.getAccount_balance()) {
         return new ResponseEntity(new ResponseError(400, "Insufficient money to transfer"),
                 HttpStatus.NOT_FOUND);
@@ -84,11 +84,11 @@ public class TransactionController {
 
        /* trasnferencia descuenta de una y suma en la otra*/ 
        
-       origin_Account.setAccount_balance(origin_Account.getAccount_balance()-transaction.getAmount());
-       destination_Account.setAccount_balance(origin_Account.getAccount_balance()+transaction.getAmount());
+       amount_for_Origin= origin_Account.getAccount_balance()-transaction.getAmount();
+       amount_for_destination=destination_Account.getAccount_balance()+transaction.getAmount();
 
-       restService.putAccount(String.format("http://localhost:8889/accounts"),amount);
-
+       restService.putAccount(String.format("http://localhost:8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
+       restService.putAccount(String.format("http://localhost:8889/accounts/%d",destination_Account.getId()),amount_for_destination);
        
        return transactionService.saveTransaction(transaction);
     

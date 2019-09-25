@@ -9,15 +9,15 @@ import unsl.entities.*;
 @Service
 public class RestService {
     
-    /**
+    /*
      * @param url
      * @return
      * @throws Exception
-     * */
+     * 
     public User getUser(String url) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
 
-        User user;  /* crear contrustor vacio en usuario para q no tire error */
+        User user;  /* crear contrustor vacio en usuario para q no tire error 
 
         try {
             user = restTemplate.getForObject(url, User.class);
@@ -27,7 +27,7 @@ public class RestService {
 
         return user;
     }
-    
+    */
     
 
     /** 
@@ -54,10 +54,10 @@ public class RestService {
      * @param url
      * @throws Exception
      */
-    public void putAccount(String url, Long amount) throws Exception {
+    public void putAccount(String url, float amount) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         try {
-            restTemplate.put(url, amount);
+            restTemplate.put(url, request, uriVariables);
         }  catch (Exception e){
             throw new Exception( buildMessageError(e));
         }
