@@ -11,6 +11,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.jboss.logging.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -99,29 +100,47 @@ public class TransactionController {
        amount_for_destination.setAmount(destination_Account.getAccount_balance().add(transaction.getAmount()));
 
        restService.putAccount(String.format("http://localhost:8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
-       restService.putAccount(String.format("http://localhost:8889/accounts/%d",destination_Account.getId()),amount_for_destination);
+     //  restService.putAccount(String.format("http://localhost:8889/accounts/%d",destination_Account.getId()),amount_for_destination);
        
-       return transactionService.saveTransaction(transaction,"PROCESADA");
+       return transactionService.saveTransaction(transaction,"PENDIENTE");
     
     }
-     /*
-    @PutMapping(value = "/transactions")
+     
+    @PutMapping(value = "/transactions{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public void updateStatus(@RequestBody String status){
-        
-         
+    public Transaction updateStatus(@PathVariable("id") long id,@RequestBody String status) throws Exception {
+       Amount amount_for_Origin = new Amount();
+       Amount amount_for_destination = new Amount(); 
+      
+       Account origin_Account;
+       Account destination_Account;
+       Transaction transaction_made= transactionService.getTransaction(id);
+       
+
         if(status.equals("PROCESADA")){
-          
+
+            /** solo hace request de una cuenta porque tiene que sumarle a la cuenta destino */
+            destination_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction_made.getDestination_account_id()));
+            amount_for_destination.setAmount(destination_Account.getAccount_balance().add(transaction_made.getAmount()));
+            restService.putAccount(String.format("http://localhost:8889/accounts/%d",destination_Account.getId()),amount_for_destination); 
+            return transactionService.saveTransaction(transaction_made,status);
+
+         }else{
+           if(status.equals("CANCELADA")){
+
+            origin_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction_made.getOrigin_account_id()));
+            amount_for_Origin.setAmount(origin_Account.getAccount_balance().add(transaction_made.getAmount())); 
+            restService.putAccount(String.format("http://localhost:8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
+            return transactionService.saveTransaction(transaction_made,status);
+           }else{
+            return transactionService.saveTransaction(transaction_made,"PENDIENTE");
+           }
 
          }  
 
     }
-   */
-
-
-    
-
+   
 }
 
 
