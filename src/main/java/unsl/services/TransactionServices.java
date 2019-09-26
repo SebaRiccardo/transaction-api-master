@@ -31,7 +31,7 @@ public class TransactionServices{
    
     return transactionRepository.save(transaction);
   }
-  
+  /** invertir el orde de la fech porque da primero el año y despues el mes y el dia */
   public static String getCurrentTime() {
     LocalDate today = LocalDate.now();
         return today.toString();
