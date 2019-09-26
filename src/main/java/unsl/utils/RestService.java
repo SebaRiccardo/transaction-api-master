@@ -9,27 +9,7 @@ import unsl.entities.*;
 @Service
 public class RestService {
     
-    /*
-     * @param url
-     * @return
-     * @throws Exception
-     * 
-    public User getUser(String url) throws Exception {
-        RestTemplate restTemplate = new RestTemplate();
-
-        User user;  /* crear contrustor vacio en usuario para q no tire error 
-
-        try {
-            user = restTemplate.getForObject(url, User.class);
-        }  catch (Exception e){
-            throw new Exception( buildMessageError(e));
-        }
-
-        return user;
-    }
-    */
     
-
     /** 
      * @param url
      * @return
