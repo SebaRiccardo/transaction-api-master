@@ -48,7 +48,7 @@ public class TransactionController {
         Transaction transaction = transactionService.getTransaction(transactionId);
         if (transaction == null) {
             return new ResponseEntity(
-                    new ResponseError(404, String.format("Transaction %d not found", transaction.getId())),
+                    new ResponseError(404, String.format("Transaction with id %d not found", transaction.getId())),
                     HttpStatus.NOT_FOUND);
         }
         return transaction;
