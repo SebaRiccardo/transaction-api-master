@@ -103,7 +103,7 @@ public class TransactionController {
        restService.putAccount(String.format("http://localhost:8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
      //  restService.putAccount(String.format("http://localhost:8889/accounts/%d",destination_Account.getId()),amount_for_destination);
        
-       return transactionService.saveTransaction(transaction,"PENDIENTE");
+       return transactionService.saveTransaction(transaction,Transaction.Status.PENDIENTE);
     
     }
      
