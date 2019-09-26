@@ -22,6 +22,7 @@ import unsl.entities.Account;
 import unsl.entities.Amount;
 import unsl.entities.ResponseError;
 import unsl.entities.Transaction;
+import unsl.entities.Transaction.Status;
 import unsl.services.TransactionServices;
 import unsl.utils.RestService;
 
@@ -106,10 +107,11 @@ public class TransactionController {
     
     }
      
-    @PutMapping(value = "/transactions{id}")
+    @PutMapping(value = "/transactions/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public Transaction updateStatus(@PathVariable("id") long id,@RequestBody String status) throws Exception {
+    public Transaction updateStatus(@PathVariable("id") long id,@RequestBody Transaction transactionSent) throws Exception {
+      
        Amount amount_for_Origin = new Amount();
        Amount amount_for_destination = new Amount(); 
       
@@ -117,28 +119,30 @@ public class TransactionController {
        Account destination_Account;
        Transaction transaction_made= transactionService.getTransaction(id);
        
+        
+        if(transactionSent.getStatus()==Status.PROCESADA){
 
-        if(status.equals("PROCESADA")){
-
-            /** solo hace request de una cuenta porque tiene que sumarle a la cuenta destino */
+            // solo hace request de una cuenta porque tiene que sumarle a la cuenta destino 
             destination_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction_made.getDestination_account_id()));
             amount_for_destination.setAmount(destination_Account.getAccount_balance().add(transaction_made.getAmount()));
             restService.putAccount(String.format("http://localhost:8889/accounts/%d",destination_Account.getId()),amount_for_destination); 
-            return transactionService.saveTransaction(transaction_made,status);
+            
+            return transactionService.saveTransaction(transaction_made,transactionSent.getStatus());
 
          }else{
-           if(status.equals("CANCELADA")){
+           if(transactionSent.getStatus()==Status.CANCELADA){
 
             origin_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction_made.getOrigin_account_id()));
             amount_for_Origin.setAmount(origin_Account.getAccount_balance().add(transaction_made.getAmount())); 
             restService.putAccount(String.format("http://localhost:8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
-            return transactionService.saveTransaction(transaction_made,status);
+           
+            return transactionService.saveTransaction(transaction_made,transactionSent.getStatus());
+         
            }else{
-            return transactionService.saveTransaction(transaction_made,"PENDIENTE");
+            return transactionService.saveTransaction(transaction_made,transactionSent.getStatus());
            }
-
          }  
-
+          
     }
    
 }
