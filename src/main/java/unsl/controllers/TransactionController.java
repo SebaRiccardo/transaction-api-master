@@ -63,6 +63,8 @@ public class TransactionController {
       
        Account origin_Account;
        Account destination_Account;
+
+
        /**importe mayor a cero */
        if(transaction.getAmount().equals(new BigDecimal(0))){
         return new ResponseEntity(new ResponseError(400, "The amount to transfer can't be zero"),
@@ -73,8 +75,6 @@ public class TransactionController {
         return new ResponseEntity(new ResponseError(400, "The amount to transfer can't be negative"),
         HttpStatus.NOT_FOUND);
        }
-         
-
        /* obtengo dos accounts */
        origin_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction.getOrigin_account_id()));
        destination_Account= restService.getAccount(String.format("http://localhost:8889/accounts/%d",transaction.getDestination_account_id()));
@@ -88,7 +88,7 @@ public class TransactionController {
        }
      
        /* debe tener suficiente dinero para transferir */
-       if( transaction.getAmount().compareTo(origin_Account.getAccount_balance())>0) {
+       if(transaction.getAmount().compareTo(origin_Account.getAccount_balance())>0) {
         return new ResponseEntity(new ResponseError(400, "Insufficient money to transfer"),
                 HttpStatus.NOT_FOUND);
        }
@@ -101,9 +101,23 @@ public class TransactionController {
        restService.putAccount(String.format("http://localhost:8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
        restService.putAccount(String.format("http://localhost:8889/accounts/%d",destination_Account.getId()),amount_for_destination);
        
-       return transactionService.saveTransaction(transaction);
+       return transactionService.saveTransaction(transaction,"PROCESADA");
     
     }
+     /*
+    @PutMapping(value = "/transactions")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void updateStatus(@RequestBody String status){
+        
+         
+        if(status.equals("PROCESADA")){
+          
+
+         }  
+
+    }
+   */
 
 
     
