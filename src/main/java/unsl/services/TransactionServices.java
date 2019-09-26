@@ -24,19 +24,11 @@ public class TransactionServices{
       return transactionRepository.findById(id).orElse(null);
   }
 
-  public Transaction saveTransaction(Transaction transaction,String status){
+  public Transaction saveTransaction(Transaction transaction,Transaction.Status status){
     
     transaction.setDate(TransactionServices.getCurrentTime()); 
-    if(status.equals("PROCESADA")){
-      transaction.setStatus(Transaction.Status.PROCESADA);
-
-    }else{ 
-      if(status.equals("CANCELADA")){
-      transaction.setStatus(Transaction.Status.CANCELADA);
-    }else{
-      transaction.setStatus(Transaction.Status.PENDIENTE);
-    }
-  }
+    
+    transaction.setStatus(status);
    
     return transactionRepository.save(transaction);
   }
