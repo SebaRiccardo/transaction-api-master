@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -62,8 +63,16 @@ public class TransactionController {
       
        Account origin_Account;
        Account destination_Account;
-       
-       
+       /**importe mayor a cero */
+       if(transaction.getAmount().equals(new BigDecimal(0))){
+        return new ResponseEntity(new ResponseError(400, "The amount to transfer can't be zero"),
+        HttpStatus.NOT_FOUND);
+       }
+       /** importe positivo */
+       if((transaction.getAmount().compareTo(new BigDecimal(-1)) == -1) || (transaction.getAmount().compareTo(new BigDecimal(-1))==0)){
+        return new ResponseEntity(new ResponseError(400, "The amount to transfer can't be negative"),
+        HttpStatus.NOT_FOUND);
+       }
          
 
        /* obtengo dos accounts */
