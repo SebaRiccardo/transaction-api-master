@@ -7,10 +7,6 @@ import java.math.BigDecimal;
 import javax.persistence.*;
 
 
-@Entity 
-@Table (name= "accounts",
-  uniqueConstraints={
-     @UniqueConstraint(columnNames={"id"})})
 
   public class Account {
 
