@@ -1,15 +1,19 @@
 package unsl.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-import unsl.entities.*;
+
+import unsl.entities.Account;
+import unsl.entities.Amount;
 
 @Service
 public class RestService {
     
-    
+    @Autowired
+    private RestTemplate restTemplate;
     /** 
      * @param url
      * @return
@@ -17,8 +21,6 @@ public class RestService {
      */
     public Account getAccount(String url) throws Exception {
         
-        RestTemplate restTemplate = new RestTemplate();
-
         Account account;
 
         try {
@@ -36,7 +38,6 @@ public class RestService {
      * @throws Exception
      */
     public void putAccount(String url, Amount amount) throws Exception {
-        RestTemplate restTemplate = new RestTemplate();
         try {
             restTemplate.put(url,amount);
             
