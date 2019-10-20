@@ -16,6 +16,7 @@ public class RestService {
      * @throws Exception
      */
     public Account getAccount(String url) throws Exception {
+        
         RestTemplate restTemplate = new RestTemplate();
 
         Account account;

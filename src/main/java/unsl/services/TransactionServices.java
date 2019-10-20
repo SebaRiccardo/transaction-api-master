@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import unsl.entities.Transaction;
 import unsl.repository.TransactionRepository;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class TransactionServices{
@@ -34,8 +35,11 @@ public class TransactionServices{
   }
   /** invertir el orde de la fech porque da primero el año y despues el mes y el dia */
   public static String getCurrentTime() {
+    // ajustar el time zone dependiendo de donde se realizo la transaccion
+   
     LocalDate today = LocalDate.now();
-        return today.toString();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY"); 
+     return formatter.format(today).toString(); 
   }
 
 }
