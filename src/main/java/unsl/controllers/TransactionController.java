@@ -26,8 +26,9 @@ import unsl.utils.RestService;
 
 @RestController
 public class TransactionController {
-     public static String ipCuentas= "3.85.25.114:8889";
-    
+     public static String ipCuentas= "54.210.50.176";
+     public static String port = ":8889";
+     
     @Autowired
     TransactionServices transactionService;
    
@@ -75,8 +76,8 @@ public class TransactionController {
         HttpStatus.BAD_REQUEST);
        }
        /* obtengo dos accounts */
-       origin_Account= restService.getAccount(String.format("http://"+ipCuentas+"/accounts/%d",transaction.getOrigin_account_id()));
-       destination_Account= restService.getAccount(String.format("http://"+ipCuentas+"/accounts/%d",transaction.getDestination_account_id()));
+       origin_Account= restService.getAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",transaction.getOrigin_account_id()));
+       destination_Account= restService.getAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",transaction.getDestination_account_id()));
        /**  una cuenta no pude transferir a la misma cuenta*/
        if(origin_Account.getId()== destination_Account.getId()){
         return new ResponseEntity(new ResponseError(400, "The origin account and destination account must be different accounts"),HttpStatus.BAD_REQUEST);
@@ -96,7 +97,7 @@ public class TransactionController {
        
        amount_for_Origin.setAmount(origin_Account.getAccount_balance().subtract(transaction.getAmount()));  
        /**guarda en la base de datos la cuenta con la plata descontada */ 
-       restService.putAccount(String.format("http://"+ipCuentas+"/accounts/%d",origin_Account.getId()),amount_for_Origin);
+       restService.putAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
       /** guarda la transaccion para despues saber cuanto le tiene que devolver en caso de cancelada o sumar en caso de procesada  */
        return transactionService.saveTransaction(transaction,Transaction.Status.PENDIENTE);
     
@@ -118,9 +119,9 @@ public class TransactionController {
         if(transactionSent.getStatus()==Status.PROCESADA){
 
             // solo hace request de una cuenta porque tiene que sumarle a la cuenta destino 
-            destination_Account= restService.getAccount(String.format("http://"+ipCuentas+"/accounts/%d",transaction_made.getDestination_account_id()));
+            destination_Account= restService.getAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",transaction_made.getDestination_account_id()));
             amount_for_destination.setAmount(destination_Account.getAccount_balance().add(transaction_made.getAmount()));
-            restService.putAccount(String.format("http://"+ipCuentas+"/accounts/%d",destination_Account.getId()),amount_for_destination); 
+            restService.putAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",destination_Account.getId()),amount_for_destination); 
             
             return transactionService.saveTransaction(transaction_made,transactionSent.getStatus());
 
@@ -128,9 +129,9 @@ public class TransactionController {
            /** le devuelve el dinero */
            if(transactionSent.getStatus()==Status.CANCELADA){
 
-            origin_Account= restService.getAccount(String.format("http://"+ipCuentas+"/accounts/%d",transaction_made.getOrigin_account_id()));
+            origin_Account= restService.getAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",transaction_made.getOrigin_account_id()));
             amount_for_Origin.setAmount(origin_Account.getAccount_balance().add(transaction_made.getAmount())); 
-            restService.putAccount(String.format("http://"+ipCuentas+"/accounts/%d",origin_Account.getId()),amount_for_Origin);
+            restService.putAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
            
             return transactionService.saveTransaction(transaction_made,transactionSent.getStatus());
          
