@@ -5,13 +5,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.retry.annotation.Retryable;
 import unsl.entities.Account;
 import unsl.entities.Amount;
+import org.springframework.retry.annotation.Backoff;
+
+import java.time.LocalDateTime;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class RestService {
-    
+    private static Logger LOGGER = LoggerFactory.getLogger(RestService.class);
     @Autowired
     private RestTemplate restTemplate;
     /** 
@@ -19,8 +25,9 @@ public class RestService {
      * @return
      * @throws Exception
      */
+    @Retryable( maxAttempts = 4, backoff = @Backoff(1000))
     public Account getAccount(String url) throws Exception {
-        
+        LOGGER.info(String.format("GET ACCOUNT :"+ url+"%d", LocalDateTime.now().getSecond()));
         Account account;
 
         try {
@@ -37,7 +44,9 @@ public class RestService {
      * @param url
      * @throws Exception
      */
+    @Retryable( maxAttempts = 4, backoff = @Backoff(1000))
     public void putAccount(String url, Amount amount) throws Exception {
+        LOGGER.info("PUT ACCOUNT :"+ url);
         try {
             restTemplate.put(url,amount);
             
