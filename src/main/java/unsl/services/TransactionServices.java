@@ -33,7 +33,7 @@ public class TransactionServices{
    
     return transactionRepository.save(transaction);
   }
-  /** invertir el orde de la fech porque da primero el año y despues el mes y el dia */
+  
   public static String getCurrentTime() {
     // ajustar el time zone dependiendo de donde se realizo la transaccion
    

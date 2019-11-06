@@ -26,7 +26,7 @@ import unsl.utils.RestService;
 
 @RestController
 public class TransactionController {
-     public static String ipCuentas= "54.210.50.176";
+     private static String ipCuentas= "54.210.50.176";
      public static String port = ":8889";
      
     @Autowired
