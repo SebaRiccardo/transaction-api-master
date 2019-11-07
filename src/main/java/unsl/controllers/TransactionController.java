@@ -26,7 +26,7 @@ import unsl.utils.RestService;
 
 @RestController
 public class TransactionController {
-     private static String ipCuentas= "54.210.50.176";
+     private static String ipCuentas= "localhost";
      public static String port = ":8889";
      
     @Autowired
@@ -34,6 +34,15 @@ public class TransactionController {
    
     @Autowired
     RestService  restService; 
+    
+    @GetMapping(value = "/ping")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String ping() {
+       
+        return "pong";
+    }
+   
 
     @GetMapping(value = "/transactions")
     @ResponseBody
@@ -47,9 +56,7 @@ public class TransactionController {
     public Object getTransaction(@PathVariable("id") long transactionId) {
         Transaction transaction = transactionService.getTransaction(transactionId);
         if (transaction == null) {
-            return new ResponseEntity(
-                    new ResponseError(404, String.format("Transaction with id %d not found", transactionId)),
-                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity( new ResponseError(404, String.format("Transaction with id %d not found", transactionId)),HttpStatus.NOT_FOUND);
         }
         return transaction;
     }
@@ -76,12 +83,22 @@ public class TransactionController {
         HttpStatus.BAD_REQUEST);
        }
        /* obtengo dos accounts */
-       origin_Account= restService.getAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",transaction.getOrigin_account_id()));
-       destination_Account= restService.getAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",transaction.getDestination_account_id()));
+       origin_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction.getOrigin_account_id()));
+       destination_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction.getDestination_account_id()));
+       // se fija sino estan dadas de baja las cuentas
+       if(origin_Account.getStatus().equals(Account.Status.BAJA)){
+           return new ResponseEntity(new ResponseError(400, String.format("The account with id: %d is closed",origin_Account.getId())),HttpStatus.BAD_REQUEST);
+       }
+        // se fija sino estan dabas de baja las cuentas 
+       if(destination_Account.getStatus().equals(Account.Status.BAJA)){
+        return new ResponseEntity(new ResponseError(400, String.format("The account with id: %d is closed",destination_Account.getId())),HttpStatus.BAD_REQUEST);
+       }
+
        /**  una cuenta no pude transferir a la misma cuenta*/
        if(origin_Account.getId()== destination_Account.getId()){
         return new ResponseEntity(new ResponseError(400, "The origin account and destination account must be different accounts"),HttpStatus.BAD_REQUEST);
        }
+       
        /* el tipo de moneda tiene que ser el mismo */
        if (!origin_Account.getCurrency().equals(destination_Account.getCurrency()) ) {
         return new ResponseEntity(new ResponseError(400, "The origin account and destination account must have the same currency"),HttpStatus.BAD_REQUEST);
@@ -97,7 +114,7 @@ public class TransactionController {
        
        amount_for_Origin.setAmount(origin_Account.getAccount_balance().subtract(transaction.getAmount()));  
        /**guarda en la base de datos la cuenta con la plata descontada */ 
-       restService.putAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
+       restService.putAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",origin_Account.getId()),amount_for_Origin);
       /** guarda la transaccion para despues saber cuanto le tiene que devolver en caso de cancelada o sumar en caso de procesada  */
        return transactionService.saveTransaction(transaction,Transaction.Status.PENDIENTE);
     
@@ -115,13 +132,12 @@ public class TransactionController {
        Account destination_Account;
        Transaction transaction_made= transactionService.getTransaction(id);
        
-        
         if(transactionSent.getStatus()==Status.PROCESADA){
 
             // solo hace request de una cuenta porque tiene que sumarle a la cuenta destino 
-            destination_Account= restService.getAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",transaction_made.getDestination_account_id()));
+            destination_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction_made.getDestination_account_id()));
             amount_for_destination.setAmount(destination_Account.getAccount_balance().add(transaction_made.getAmount()));
-            restService.putAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",destination_Account.getId()),amount_for_destination); 
+            restService.putAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",destination_Account.getId()),amount_for_destination); 
             
             return transactionService.saveTransaction(transaction_made,transactionSent.getStatus());
 
@@ -129,19 +145,17 @@ public class TransactionController {
            /** le devuelve el dinero */
            if(transactionSent.getStatus()==Status.CANCELADA){
 
-            origin_Account= restService.getAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",transaction_made.getOrigin_account_id()));
+            origin_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction_made.getOrigin_account_id()));
             amount_for_Origin.setAmount(origin_Account.getAccount_balance().add(transaction_made.getAmount())); 
-            restService.putAccount(String.format("http://"+ipCuentas+":8889/accounts/%d",origin_Account.getId()),amount_for_Origin);
+            restService.putAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",origin_Account.getId()),amount_for_Origin);
            
             return transactionService.saveTransaction(transaction_made,transactionSent.getStatus());
          
            }else{
             return transactionService.saveTransaction(transaction_made,transactionSent.getStatus());
            }
-         }  
-          
+         }      
     }
-   
 }
 
 
