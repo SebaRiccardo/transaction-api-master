@@ -85,14 +85,7 @@ public class TransactionController {
        /* obtengo dos accounts */
        origin_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction.getOrigin_account_id()));
        destination_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction.getDestination_account_id()));
-       // se fija sino estan dadas de baja las cuentas
-       if(origin_Account.getStatus().equals(Account.Status.BAJA)){
-           return new ResponseEntity(new ResponseError(400, String.format("The account with id: %d is closed",origin_Account.getId())),HttpStatus.BAD_REQUEST);
-       }
-        // se fija sino estan dabas de baja las cuentas 
-       if(destination_Account.getStatus().equals(Account.Status.BAJA)){
-        return new ResponseEntity(new ResponseError(400, String.format("The account with id: %d is closed",destination_Account.getId())),HttpStatus.BAD_REQUEST);
-       }
+       
 
        /**  una cuenta no pude transferir a la misma cuenta*/
        if(origin_Account.getId()== destination_Account.getId()){
