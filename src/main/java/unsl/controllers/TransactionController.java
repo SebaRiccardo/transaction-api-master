@@ -86,7 +86,6 @@ public class TransactionController {
        origin_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction.getOrigin_account_id()));
        destination_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction.getDestination_account_id()));
        
-
        /**  una cuenta no pude transferir a la misma cuenta*/
        if(origin_Account.getId()== destination_Account.getId()){
         return new ResponseEntity(new ResponseError(400, "The origin account and destination account must be different accounts"),HttpStatus.BAD_REQUEST);
