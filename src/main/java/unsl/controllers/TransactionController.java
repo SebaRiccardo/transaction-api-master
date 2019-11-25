@@ -26,7 +26,7 @@ import unsl.utils.RestService;
 
 @RestController
 public class TransactionController {
-     private static String ipCuentas= "localhost";
+     private static String ipCuentas= "3.83.42.47";
      public static String port = ":8889";
      
     @Autowired
@@ -39,11 +39,9 @@ public class TransactionController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public String ping() {
-       
         return "pong";
     }
    
-
     @GetMapping(value = "/transactions")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
@@ -56,7 +54,7 @@ public class TransactionController {
     public Object getTransaction(@PathVariable("id") long transactionId) {
         Transaction transaction = transactionService.getTransaction(transactionId);
         if (transaction == null) {
-            return new ResponseEntity( new ResponseError(404, String.format("Transaction with id %d not found", transactionId)),HttpStatus.NOT_FOUND);
+            return new ResponseEntity( new ResponseError(404, String.format("La transferencia con id: %d no existe", transactionId)),HttpStatus.NOT_FOUND);
         }
         return transaction;
     }
@@ -65,41 +63,47 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public Object createTransaction(@RequestBody Transaction transaction) throws Exception {
-       Amount amount_for_Origin = new Amount();
-       Amount amount_for_destination = new Amount(); 
       
+       Amount amount_for_Origin = new Amount();
+        
        Account origin_Account;
        Account destination_Account;
 
 
        /**importe mayor a cero */
        if(transaction.getAmount().equals(new BigDecimal(0))){
-        return new ResponseEntity(new ResponseError(400, "The amount to transfer can't be zero"),
+        return new ResponseEntity(new ResponseError(400, "El monto a transferir no puede ser cero"),
         HttpStatus.BAD_REQUEST);
        }
        /** importe positivo */
        if((transaction.getAmount().compareTo(new BigDecimal(-1)) == -1) || (transaction.getAmount().compareTo(new BigDecimal(-1))==0)){
-        return new ResponseEntity(new ResponseError(400, "The amount to transfer can't be negative"),
+        return new ResponseEntity(new ResponseError(400, "El monto a trasnferir no puede ser negativo"),
         HttpStatus.BAD_REQUEST);
        }
        /* obtengo dos accounts */
        origin_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction.getOrigin_account_id()));
        destination_Account= restService.getAccount(String.format("http://"+ipCuentas+port+"/accounts/%d",transaction.getDestination_account_id()));
-       
+       // se fija sino estan dadas de baja las cuentas
+       if(origin_Account.getStatus().equals(Account.Status.BAJA)){
+        return new ResponseEntity(new ResponseError(400, String.format("La cuenta con id: %d esta cerrada",origin_Account.getId())),HttpStatus.BAD_REQUEST);
+      }
+       // se fija sino estan dabas de baja las cuentas 
+      if(destination_Account.getStatus().equals(Account.Status.BAJA)){
+       return new ResponseEntity(new ResponseError(400, String.format("La cuenta con id: %d esta cerrada",destination_Account.getId())),HttpStatus.BAD_REQUEST);
+       }
        /**  una cuenta no pude transferir a la misma cuenta*/
        if(origin_Account.getId()== destination_Account.getId()){
-        return new ResponseEntity(new ResponseError(400, "The origin account and destination account must be different accounts"),HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ResponseError(400, "La cuenta de origen y destino deben ser distintas"),HttpStatus.BAD_REQUEST);
        }
        
        /* el tipo de moneda tiene que ser el mismo */
        if (!origin_Account.getCurrency().equals(destination_Account.getCurrency()) ) {
-        return new ResponseEntity(new ResponseError(400, "The origin account and destination account must have the same currency"),HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ResponseError(400,"La cuenta de origen y destino deben ser del mismo tipo de moneda"),HttpStatus.BAD_REQUEST);
        }
      
        /* debe tener suficiente dinero para transferir */
        if(transaction.getAmount().compareTo(origin_Account.getAccount_balance())>0) {
-        return new ResponseEntity(new ResponseError(400, "Insufficient money to transfer"),
-                HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ResponseError(400, "Dinero insuficiente"),HttpStatus.BAD_REQUEST);
        }
 
        /* trasnferencia descuenta de cuenta de origen*/ 
